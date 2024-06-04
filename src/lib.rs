@@ -42,7 +42,7 @@ pub enum GameEnd<'a>{
 pub struct GameState<'a>{
     pub winner: GameEnd<'a>,
     pub current_player: usize,
-    move_count: u8,
+    move_count: u32,
     board_width: usize,
     board_height: usize,
     board: Vec<Vec<Option<&'a Player>>>,

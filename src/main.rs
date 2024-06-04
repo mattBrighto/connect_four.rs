@@ -7,8 +7,8 @@ fn main() {
     print!("Player Count: ");
     let player_count = match ask_for_input().parse::<u8>(){
             Err(e) => {println!("parsing error: {e}");return;}
-            Ok(n) if n <= 8 => n,
-            Ok(n) => {println!("player count {n} is too big");return;}
+            Ok(n) if n <= 8 && n >=2 => n,
+            Ok(n) => {println!("player count {n} is too big or too small");return;}
     };
 
     for i in 1..=player_count{
