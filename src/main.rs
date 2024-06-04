@@ -57,6 +57,7 @@ fn main() {
                 break;
             }
             GameEnd::Draw => {
+                print!("{esc}[2J{esc}[1;1H", esc = 27 as char); //clear screen
                 gm.draw_board();
                 println!("Draw");
                 break;
