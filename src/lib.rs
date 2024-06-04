@@ -65,8 +65,6 @@ impl<'a> GameState<'a>{
 
     pub fn draw_board(&self){
 
-        //println!("board size width({});height({})", self.board_width, self.board_height);
-
         for r in 0..self.board_height{
             let mut row = "|".to_string();
             let mut divider = "+".to_string();
@@ -218,6 +216,8 @@ impl<'a> GameState<'a>{
             }
         }
     }
+
+    //------------- helper functions -----------------
 
     fn  visualize_left(&self, c: usize, r: usize){
         let mut vis = GameState::new(self.board_width, self.board_height);
