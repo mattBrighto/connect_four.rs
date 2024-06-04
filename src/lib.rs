@@ -42,6 +42,7 @@ pub enum GameEnd<'a>{
 pub struct GameState<'a>{
     pub winner: GameEnd<'a>,
     pub current_player: usize,
+    pub win_line_size: usize,
     move_count: u32,
     board_width: usize,
     board_height: usize,
@@ -58,6 +59,7 @@ impl<'a> GameState<'a>{
             board_width: w,
             board_height: h,
             board: vec![vec![None;h];w],
+            win_line_size: 4,
         }
     }
 
@@ -138,85 +140,102 @@ impl<'a> GameState<'a>{
         }
 
         for c in 0..self.board_width{
-            for r in 0..self.board_height-3{
-                if self.board[c][r] != None && self.board[c][r] == self.board[c][r+1] &&
-                    self.board[c][r] == self.board[c][r+2] &&
-                    self.board[c][r] == self.board[c][r+3] {
+            for r in 0..self.board_height-self.win_line_size+1{
+                
+                let mut statement = self.board[c][r] != None;
+                for i in 1..self.win_line_size{
+                    statement = statement && self.board[c][r] == self.board[c][r+i as usize];
+                }
+                if statement {
                     self.winner = GameEnd::Win(self.board[c][r].unwrap());
-                } 
+                }
+ 
             }
         }
 
         for r in 0..self.board_height{
-            for c in 0..self.board_width-3{
-                if self.board[c][r] != None && self.board[c][r] == self.board[c+1][r] &&
-                    self.board[c][r] == self.board[c+2][r] &&
-                    self.board[c][r] == self.board[c+3][r] {
+            for c in 0..self.board_width-self.win_line_size+1{
+                
+                let mut statement = self.board[c][r] != None;
+                for i in 1..self.win_line_size{
+                    statement = statement && self.board[c][r] == self.board[c+i as usize][r];
+                }
+                if statement {
                     self.winner = GameEnd::Win(self.board[c][r].unwrap());
-
-                } 
+                }
+ 
             }
         }
 
         //----------- diagonals -----------------------
-        for row in 0..self.board_height-3{
+        for row in 0..self.board_height-self.win_line_size+1{
             let mut c = 0;
-            for r in row..self.board_height-3{
+            for r in row..self.board_height-self.win_line_size+1{
                 //self.visualize_left(c, r);
-                if self.board[c][r] != None &&
-                    self.board[c][r] == self.board[c+1][r+1] &&
-                    self.board[c][r] == self.board[c+2][r+2] &&
-                    self.board[c][r] == self.board[c+3][r+3] {
+                
+                let mut statement = self.board[c][r] != None;
+                for i in 1..self.win_line_size{
+                    statement = statement && self.board[c][r] == self.board[c+i as usize][r+i as usize];
+                }
+                if statement {
                     self.winner = GameEnd::Win(self.board[c][r].unwrap());
                 }
+
                 c+=1;
-                if c+3 >= self.board_width{
+                if c+self.win_line_size-1 >= self.board_width{
                     break;
                 }
             }
         }
 
-        for column in 1..self.board_width-3{
+        for column in 1..self.board_width-self.win_line_size+1{
             let mut r = 0;
-            for c in column..self.board_width-3{
+            for c in column..self.board_width-self.win_line_size+1{
                 //self.visualize_left(c,r);
-                if self.board[c][r] != None &&
-                    self.board[c][r] == self.board[c+1][r+1] &&
-                    self.board[c][r] == self.board[c+2][r+2] &&
-                    self.board[c][r] == self.board[c+3][r+3] {
+                
+                let mut statement = self.board[c][r] != None;
+                for i in 1..self.win_line_size{
+                    statement = statement && self.board[c][r] == self.board[c+i as usize][r+i as usize];
+                }
+                if statement {
                     self.winner = GameEnd::Win(self.board[c][r].unwrap());
                 }
+
                 r+=1;
             }
         }
 
-        for row in 0..self.board_height-3{
+        for row in 0..self.board_height-self.win_line_size+1{
             let mut c = self.board_width-1;
-            for r in row..self.board_height-3{
+            for r in row..self.board_height-self.win_line_size+1{
                 //self.visualize_right(c,r);
-                if self.board[c][r] != None &&
-                    self.board[c][r] == self.board[c-1][r+1] &&
-                    self.board[c][r] == self.board[c-2][r+2] &&
-                    self.board[c][r] == self.board[c-3][r+3] {
+                let mut statement = self.board[c][r] != None;
+                for i in 1..self.win_line_size{
+                    statement = statement && self.board[c][r] == self.board[c-i as usize][r+i as usize];
+                }
+                if statement {
                     self.winner = GameEnd::Win(self.board[c][r].unwrap());
                 }
                 c-=1;
-                if c as i8 -3 <= 0{
+                if c as i8 - self.win_line_size as i8 +2 <= 0{
                     break;
                 }
             }
         }
 
-        for column in (3..self.board_width-1).rev(){
+        for column in (self.win_line_size-1..self.board_width-1).rev(){
             let mut r = 0;
-            for c in (3..=column).rev(){
+            for c in (self.win_line_size-1..=column).rev(){
                 //self.visualize_right(c,r);
-                if self.board[c][r] != None &&
-                    self.board[c][r] == self.board[c-1][r+1] &&
-                    self.board[c][r] == self.board[c-2][r+2] &&
-                    self.board[c][r] == self.board[c-3][r+3] {
+                
+                let mut statement = self.board[c][r] != None;
+                for i in 1..self.win_line_size{
+                    statement = statement && self.board[c][r] == self.board[c-i as usize][r+i as usize];
+                }
+                if statement {
                     self.winner = GameEnd::Win(self.board[c][r].unwrap());
                 }
+
                 r+=1;
             }
         }
