@@ -11,7 +11,7 @@ pub const COLORS :  [&str;8] = [
 "\u{001b}[30m",
 ];
 
-#[derive(PartialEq, Clone, Debug)]
+#[derive(PartialEq)]
 pub struct Player{
     pub name: String,
     color: String,
@@ -33,14 +33,12 @@ impl Player{
     }
 }
 
-#[derive(Debug)]
 pub enum GameEnd<'a>{
     Draw,
     None,
     Win(&'a Player),
 }
 
-#[derive(Debug)]
 pub struct GameState<'a>{
     pub winner: GameEnd<'a>,
     pub current_player: usize,
@@ -64,6 +62,13 @@ impl<'a> GameState<'a>{
     }
 
     pub fn draw_board(&self){
+
+        //O(nm) is treated the same as O(2nm) that's why i separeted it from the loop below
+        print!(" ");
+        for c in 1..=self.board_width {
+            print!(" {}. ", c);
+        }
+        print!("\n");
 
         for r in 0..self.board_height{
             let mut row = "|".to_string();
