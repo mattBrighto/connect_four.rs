@@ -32,7 +32,6 @@ fn main() {
     };
 
     let mut gm = GameState::new(width.into(), height.into());
-    gm.win_line_size = 5;
 
     loop{
 
